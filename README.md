@@ -4,7 +4,7 @@
 
 
 
-This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system (i.e. a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species; Fig. 1a). This phylogenetic comparative approach apply the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's lambda tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root X_0, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix R (Fig. 1a). 
+This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system (i.e. a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species; Fig. 1a). This phylogenetic comparative approach apply the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
 
 <p align="center">
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.jpg" width="300">
@@ -15,9 +15,9 @@ This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota Evolut
 </p>
 
 
-Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon j in host i, $Y_i=\sum_j X_{ij}$  the unmeasured total microbial abundance in the microbiota of host i, $\tilde{Y}_i=Y_i⁄Y_0$  its value relative to the unknown total microbial abundance at the root $Y_0$,  and Z_ij=X_ij⁄Y_i  the measured relative abundance of microbial taxon j in host i, we sample from the joint posterior distribution P(log⁡Z_0, R, lambda, log⁡Y ̃_1,...,log⁡Y ̃_n |Z_11,…,Z_ij,…,Z_np,C), where Z_0 is the vector of relative abundances at the root, n in the number of host species, p is the number of microbial taxa, and C is the phylogenetic variance-covariance matrix. ABDOMEN perform this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language. 
+Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon $j$ in host $i$, $Y_i=\sum_j X_{ij}$  the unmeasured total microbial abundance in the microbiota of host $i$, $\tilde{Y}_i=Y_i⁄Y_0$  its value relative to the unknown total microbial abundance at the root $Y_0$,  and $Z_{ij}=X_{ij}⁄Y_i$  the measured relative abundance of microbial taxon $j$ in host $i$, we sample from the joint posterior distribution $P(\log⁡Z_0, R, \lambda, \log⁡\tilde{Y}̃_1,...,\log⁡\tilde{Y}_n |Z_{11},…,Z_{ij},…,Z_{np},C), where $Z_0$ is the vector of relative abundances at the root, $n$ is the number of host species, $p$ is the number of microbial taxa, and $C$ is the phylogenetic variance-covariance matrix. ABDOMEN perform this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language. 
 
-ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s lambda), microbiota integration (reflected in the R matrix), and ancestral microbiota composition (given by Z_0). 
+ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lambda$), microbiota integration (reflected in the $R$ matrix), and ancestral microbiota composition (given by $Z_0$). 
 
 
 
@@ -118,7 +118,7 @@ fit_summary <- ABDOMEN(tree, table, name, nb_cores = 2, chains = 4, warmup = 100
 
 # Plotting outputs:
 
-You can now automatically plot the estimated variances and covariances (R), the ancestral microbiota composition (Z0), as well as the ancestral microbiota composition in each node of the phylogeny:
+You can now automatically plot the estimated variances and covariances ($R$), the ancestral microbiota composition ($Z_0$), as well as the ancestral microbiota composition in each node of the phylogeny:
 
 ```r
 
