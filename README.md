@@ -7,7 +7,7 @@
 This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system (i.e. a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species; Fig. 1a). This phylogenetic comparative approach apply the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
 
 <p align="center">
-    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.jpg" width="300">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="300">
 </p>
 
 <p align="center">
@@ -121,7 +121,7 @@ fit_summary <- ABDOMEN(tree, table, name,
 
 # Plotting outputs:
 
-You can now automatically plot the estimated variances and covariances ($ R $ ), the ancestral microbiota composition ($ Z_0 $), as well as the ancestral microbiota composition in each node of the phylogeny:
+You can now automatically plot the estimated variances and covariances ($R$), the ancestral microbiota composition ($Z_0$), as well as the ancestral microbiota composition in each node of the phylogeny:
 
 ```r
 
