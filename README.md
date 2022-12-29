@@ -121,7 +121,7 @@ fit_summary <- ABDOMEN(tree, table, name,
 
 # Plotting outputs:
 
-You can now automatically plot the estimated variances and covariances ($R$), the ancestral microbiota composition ($Z_0$), as well as the ancestral microbiota composition in each node of the phylogeny:
+You can now automatically plot the estimated variances and covariances ($ R $), the ancestral microbiota composition ($ Z_0 $), as well as the ancestral microbiota composition in each node of the phylogeny:
 
 ```r
 
