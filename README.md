@@ -7,11 +7,11 @@
 This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system (i.e. a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species; Fig. 1a). This phylogenetic comparative approach apply the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
 
 <p align="center">
-    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="300">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
 </p>
 
 <p align="center">
-    <b>ABDOMEN: A comparative phylogenetic model for the dynamics of microbiota composition during host diversification.</b>
+    <b>Figure 1: ABDOMEN: A comparative phylogenetic model for the dynamics of microbiota composition during host diversification.</b>
 </p>
 
 
@@ -21,10 +21,7 @@ ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lam
 
 
 
-**Citation:** 
-
-
-Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon
+**Citation:** Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon
 ,
 *Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota*, bioRxiv, [doi: https://doi.org/10.1101/XXXXX](https://www.biorxiv.org/).
 
@@ -74,7 +71,7 @@ source("ABDOMEN.R")
 
 ```
 
-Then, you can load the example dataset of the gut microbiota of Certardiodactyla (from Song et al., 2020) that can be downloaded from the folder ['example'](https://github.com/BPerezLamarque/ABDOMEN/tree/main/example/).: 
+Then, you can load the example dataset of the gut microbiota of Certardiodactyla (from Song et al., 2020) that can be downloaded from the folder ['example'](https://github.com/BPerezLamarque/ABDOMEN/tree/main/example/): 
 
 ```r
 
