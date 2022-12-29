@@ -37,7 +37,7 @@ Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morl
 # Contents:
 **[Installation](#installation)**\
 **[Running ABDOMEN](#running-abdomen)**\
-**[Plotting outputs](#plotting-outputs)**\
+**[Plotting outputs](#plotting-outputs)**
 
 
 # Installation:
@@ -112,7 +112,10 @@ Now you can run ABDOMEN:
 
 ```r
 
-fit_summary <- ABDOMEN(tree, table, name, nb_cores = 2, chains = 4, warmup = 1000, iter = 2000)
+fit_summary <- ABDOMEN(tree, table, name, 
+                       detection_threshold, seed, 
+                       mean_prior_logY, sd_prior_logY=2,
+                       nb_cores = 2, chains = 4, warmup = 1000, iter = 2000)
 
 ```
 
