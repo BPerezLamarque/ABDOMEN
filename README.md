@@ -15,7 +15,7 @@ This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota Evolut
 </p>
 
 
-Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon $j$ in host $i$, $Y_i=\sum_j X_{ij}$ the unmeasured total microbial abundance in the microbiota of host $i$, $Y_i = Y_i / Y_0$ its value relative to the unknown total microbial abundance at the root $Y_0$, and $Z_{ij}=X_{ij}/Y_i$ the measured relative abundance of microbial taxon $j$ in host $i$, we sample from the joint posterior distribution $P(\log Z_0, R, \lambda, \log Y_1,...,\log Y_n | Z_{11},…,Z_{ij},…,Z_{np},C)$, where $Z_0$ is the vector of relative abundances at the root, $n$ is the number of host species, $p$ is the number of microbial taxa, and $C$ is the phylogenetic variance-covariance matrix. ABDOMEN performs this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language.
+Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon $j$ in host $i$, $Y_i=\sum_j X_{ij}$ the unmeasured total microbial abundance in the microbiota of host $i$, ${\tilde{Y}}_i = Y_i / Y_0$ its value relative to the unknown total microbial abundance at the root $Y_0$, and $Z_{ij}=X_{ij}/Y_i$ the measured relative abundance of microbial taxon $j$ in host $i$, we sample from the joint posterior distribution $P(\log Z_0, R, \lambda, \log Y_1,...,\log Y_n | Z_{11},…,Z_{ij},…,Z_{np},C)$, where $Z_0$ is the vector of relative abundances at the root, $n$ is the number of host species, $p$ is the number of microbial taxa, and $C$ is the phylogenetic variance-covariance matrix. ABDOMEN performs this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language.
 
 ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lambda$), microbiota integration (reflected in the $R$ matrix), and ancestral microbiota composition (given by $Z_0$). 
 
@@ -89,7 +89,9 @@ The following parameters must be specified to run ABDOMEN:
 
 ```r
 
-name="run_Cetartiodactyla_bacterial_orders" # the name of the run
+name <- "run_Cetartiodactyla_bacterial_orders" # the name of the run
+
+code_path <- getwd() # indicates where the stan codes are stored (here, there are directly stored in the working directory)
 
 detection_threshold <- 1e-05 # the detection threshold: below this threshold, we assume that we cannot detect a given microbial taxa. Then, all relative abundances below this threshold are set to this threshold. 
 
@@ -100,8 +102,8 @@ sd_prior_logY <- 2  # standart deviation for the Gaussian prior of logY (the lat
 
 nb_cores <- 4 # number of cores to run the analyses
 chains <-  4 # number of chains for the inference
-warmup <-  500 # number of warmup iterations in STAN
-iter <-  1000 # total number of iterations in STAN
+warmup <-  1000 # number of warmup iterations in STAN
+iter <-  2000 # total number of iterations in STAN
 
 ```
 
@@ -110,9 +112,10 @@ Now you can run ABDOMEN:
 ```r
 
 fit_summary <- ABDOMEN(tree, table, name, 
-                       detection_threshold, seed, 
-                       mean_prior_logY, sd_prior_logY=2,
-                       nb_cores = 2, chains = 4, warmup = 1000, iter = 2000)
+                       code_path = code_path,
+                       detection_threshold = detection_threshold, seed = seed, 
+                       mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
+                       nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
 
 ```
 
@@ -125,3 +128,12 @@ You can now automatically plot the estimated variances and covariances ($R$), th
 ABDOMEN_process_output(tree, table, name, fit_summary)
 
 ```
+
+
+<p align="center">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
+</p>
+
+<p align="center">
+    <b>Figure 1: ABDOMEN: A comparative phylogenetic model for the dynamics of microbiota composition during host diversification.</b>
+</p>

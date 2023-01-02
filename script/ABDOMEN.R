@@ -1,4 +1,4 @@
-ABDOMEN <- function(tree, table, name, detection_threshold=1e-05, seed=3, mean_prior_logY=0, sd_prior_logY=2,
+ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=1e-05, seed=3, mean_prior_logY=0, sd_prior_logY=2,
                     nb_cores = 1, chains = 4, warmup = 500, iter = 1000){
   
   # scale the tree
@@ -47,11 +47,9 @@ ABDOMEN <- function(tree, table, name, detection_threshold=1e-05, seed=3, mean_p
   }
   
   # Prepare the working directory
+  dir.create(file.path(code_path, "plot_ABDOMEN/"), showWarnings = FALSE)
   
-  project_path = getwd()
-  dir.create(file.path(project_path, "plot_ABDOMEN/"), showWarnings = FALSE)
-  
-  fit = stan(file=paste0(project_path,"/ABDOMEN_v1.0.stan"),
+  fit = stan(file=paste0(code_path,"/ABDOMEN_v1.0.stan"),
              data = microbiotree_input_data, cores=nb_cores,
              include = TRUE, pars=c("Z0","logY","logY_trans", "R", "lambda"),
              chains = chains, iter = iter, warmup = warmup, thin = 1, 
