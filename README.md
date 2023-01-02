@@ -4,9 +4,9 @@
 
 
 
-This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system, *i.e.* a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species typically measured using metabarcoding techniques (Fig. 1a). 
+This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) using R for a given host-microbiota system, *i.e.* a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species typically measured using metabarcoding techniques (Figure 1a). 
 
-This phylogenetic comparative approach applies the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
+This phylogenetic comparative approach applies the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Figure 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Figure 1a). 
 
 <p align="center">
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
@@ -39,7 +39,7 @@ ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lam
 # Installation:
 
 
-The scripts to run ABDOMEN ("ABDOMEN.R" and "ABDOMEN_v1.0.stan") must be downloaded from the folder ['script'](https://github.com/BPerezLamarque/ABDOMEN/tree/main/script/). 
+The R and Stan scripts to run ABDOMEN ("ABDOMEN.R" and "ABDOMEN_v1.0.stan") must be downloaded from the folder ['script'](https://github.com/BPerezLamarque/ABDOMEN/tree/main/script/) and stored in your R working directory. 
 In addition, the following packages must be installed:
 
 ```r
