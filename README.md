@@ -33,7 +33,10 @@ ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lam
 # Contents:
 **[Installation](#installation)**\
 **[Running ABDOMEN](#running-abdomen)**\
-**[Plotting outputs](#plotting-outputs)**
+**[Plotting outputs](#plotting-outputs)**\
+**[Assessing the significance of phylosymbiosis](#assessing-the-significance-of-phylosymbiosis)**
+
+
 
 
 # Installation:
