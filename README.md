@@ -4,7 +4,9 @@
 
 
 
-This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system (i.e. a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species; Fig. 1a). This phylogenetic comparative approach apply the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
+This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system, *i.e.* a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species (Fig. 1a). 
+
+This phylogenetic comparative approach apply the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
 
 <p align="center">
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
@@ -13,9 +15,6 @@ This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota Evolut
 <p align="center">
     <b>Figure 1: ABDOMEN: A comparative phylogenetic model for the dynamics of microbiota composition during host diversification.</b>
 </p>
-
-$\tilde{Y}$
-${\tilde{Y}}$
 
 Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon $j$ in host $i$, $Y_i=\sum_j X_{ij}$ the unmeasured total microbial abundance in the microbiota of host $i$, ${\tilde{Y_i}} = Y_i / Y_0$ its value relative to the unknown total microbial abundance at the root $Y_0$, and $Z_{ij}=X_{ij}/Y_i$ the measured relative abundance of microbial taxon $j$ in host $i$, we sample from the joint posterior distribution $P(\log Z_0, R, \lambda, \log {\tilde{Y_1}},...,\log {\tilde{Y_n}} | Z_{11},…,Z_{ij},…,Z_{np},C)$, where $Z_0$ is the vector of relative abundances at the root, $n$ is the number of host species, $p$ is the number of microbial taxa, and $C$ is the phylogenetic variance-covariance matrix. ABDOMEN performs this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language.
 
@@ -134,9 +133,41 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
 
 
 <p align="center">
-    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/convergence_chains_run_Cetartiodactyla_bacterial_orders_lambda.png" width="300">
+</p>
+<p align="center">
+    <b>Figure 2: Convergence of the 4 chains of ABDOMEN for the estimation of Pagel's $\lambda$, $i.e.$ the measure of phylosymbiosis. Here, $\lambda$ is estimated at 0.23 (95% CI: [0.1; 0.36])".</b>
 </p>
 
-<p align="center">
-    <b>Figure 1: ABDOMEN: A comparative phylogenetic model for the dynamics of microbiota composition during host diversification.</b>
-</p>
+
+
+# Assessing the significance of phylosymbiosis:
+
+To assess the significance of phylosymbiosis, one can perform permutatations. Here, we will randomly permutate all the host species:
+
+```r
+
+name_random <- "run_Cetartiodactyla_bacterial_orders_permutation_1"
+
+seed <- 100
+set.seed(seed)
+
+table_random <- table[sample(tree$tip.label),] # randomly permutates all the Cetartiodactyla species:
+
+fit_summary <- ABDOMEN(tree, table_random, name_random, 
+                       code_path = code_path,
+                       detection_threshold = detection_threshold, seed = seed, 
+                       mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
+                       nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
+
+ABDOMEN_process_output(tree, table_random, name, fit_summary)
+
+# this step must we replicated a large number of times (e.g. 100 with different seeds) to compare the original \$lambda$ values with the ones obtained when permuttatting the dataset. 
+
+```
+
+
+
+NB: More constraint permutations can be done, *e.g.* only permuting species having a similar diet to test the effect of diet conservatism on phylosymbiosis. 
+
+
