@@ -17,7 +17,7 @@ This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota Evolut
 $\tilde{Y}$
 ${\tilde{Y}}$
 
-Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon $j$ in host $i$, $Y_i=\sum_j X_{ij}$ the unmeasured total microbial abundance in the microbiota of host $i$, ${\tilde{Y_i}} = Y_i / Y_0$ its value relative to the unknown total microbial abundance at the root $Y_0$, and $Z_{ij}=X_{ij}/Y_i$ the measured relative abundance of microbial taxon $j$ in host $i$, we sample from the joint posterior distribution $P(\log Z_0, R, \lambda, \log Y_1,...,\log Y_n | Z_{11},…,Z_{ij},…,Z_{np},C)$, where $Z_0$ is the vector of relative abundances at the root, $n$ is the number of host species, $p$ is the number of microbial taxa, and $C$ is the phylogenetic variance-covariance matrix. ABDOMEN performs this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language.
+Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon $j$ in host $i$, $Y_i=\sum_j X_{ij}$ the unmeasured total microbial abundance in the microbiota of host $i$, ${\tilde{Y_i}} = Y_i / Y_0$ its value relative to the unknown total microbial abundance at the root $Y_0$, and $Z_{ij}=X_{ij}/Y_i$ the measured relative abundance of microbial taxon $j$ in host $i$, we sample from the joint posterior distribution $P(\log Z_0, R, \lambda, \log {\tilde{Y_1}},...,\log {\tilde{Y_n}} | Z_{11},…,Z_{ij},…,Z_{np},C)$, where $Z_0$ is the vector of relative abundances at the root, $n$ is the number of host species, $p$ is the number of microbial taxa, and $C$ is the phylogenetic variance-covariance matrix. ABDOMEN performs this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language.
 
 ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lambda$), microbiota integration (reflected in the $R$ matrix), and ancestral microbiota composition (given by $Z_0$). 
 
@@ -46,7 +46,7 @@ The scripts to run ABDOMEN ("ABDOMEN.R" and "ABDOMEN_v1.0.stan") must be downloa
 In addition, the following packages must be installed:
 
 ```r
-install.packages("ggplot2", "mvMORPH", "RPANDA", "rstan")
+install.packages("ggplot2", "mvMORPH", "RPANDA", "rstan", "RColorBrewer")
 
 ```
 
@@ -67,6 +67,7 @@ library(mvMORPH)
 library(RPANDA)
 library(rstan)
 rstan_options(auto_write = TRUE)
+library(RColorBrewer)
 
 
 source("ABDOMEN.R")
