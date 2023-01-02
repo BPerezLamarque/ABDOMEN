@@ -82,9 +82,11 @@ tree <- read.tree("tree_Cetartiodactyla.tre")
 
 # Open the table with the mean abundances of the main bacterial orders in the gut microbiota of each Cetartiodactyla species
 table <- t(read.table("table_bacterial_orders_Cetartiodactyla.txt", header=TRUE, sep="\t"))
-# each row corresponds to a Cetartiodactyla species, and each column to a bacterial order
+# each row corresponds to a Cetartiodactyla species, and each column to a bacterial order (there are a total of 14 bacterial orders)
 
 ```
+
+NBB: The Certardiodactyla dataset is only composed on 33 host species, which is not enought for having very robust and accurate parameters estimates (ideally, we recommend >50 host species and >5 microbial taxa), but ABDOMEN can be run quickly of this small dataset for demonstration. 
 
 
 The following parameters must be specified to run ABDOMEN:
@@ -133,11 +135,43 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
 
 
 <p align="center">
-    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/convergence_chains_run_Cetartiodactyla_bacterial_orders_lambda.png" width="300">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/convergence_chains_run_Cetartiodactyla_bacterial_orders_lambda.png" width="350">
 </p>
 <p align="center">
-    <b>Figure 2: Convergence of the 4 chains of ABDOMEN for the estimation of Pagel's $\lambda$, $i.e.$ the measure of phylosymbiosis. Here, $\lambda$ is estimated at 0.23 (95% CI: [0.1; 0.36])".</b>
+    <b>Figure 2: Convergence of the 4 chains of ABDOMEN for the estimation of Pagel's $\lambda$, $i.e.$ the measure of phylosymbiosis. Here, $\lambda$ is estimated at 0.23 (95% CI: [0.1; 0.36]).</b>
 </p>
+
+
+<p align="center">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_Z0_run_Cetartiodactyla_bacterial_orders.png" width="350">
+</p>
+<p align="center">
+    <b>Figure 3: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root).</b>
+</p>
+
+
+<p align="center">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_Z0_run_Cetartiodactyla_bacterial_orders.png" width="350">
+</p>
+<p align="center">
+    <b>Figure 4: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root and generalized least squares estimates at internal nodes).</b>
+</p>
+
+
+<p align="center">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_variances_run_Cetartiodactyla_bacterial_orders.png" width="350">
+</p>
+<p align="center">
+    <b>Figure 5: Estimated variances for each bacterial order in the gut microbiota of Cetartiodactyla (mean of the posterior distribution).</b>
+</p>
+
+<p align="center">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_variances_run_Cetartiodactyla_bacterial_orders.png" width="350">
+</p>
+<p align="center">
+    <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (mean of the posterior distribution) All covariances are represented in (a), while only significant ones are in (b; a significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small).</b>
+</p>
+
 
 
 
@@ -162,7 +196,7 @@ fit_summary <- ABDOMEN(tree, table_random, name_random,
 
 ABDOMEN_process_output(tree, table_random, name, fit_summary)
 
-# this step must we replicated a large number of times (e.g. 100 with different seeds) to compare the original \$lambda$ values with the ones obtained when permuttatting the dataset. 
+# this step must we replicated a large number of times (e.g. 100 with different seeds) to compare the original lambda values with the ones obtained when permuttatting the dataset. 
 
 ```
 
