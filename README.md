@@ -4,9 +4,9 @@
 
 
 
-This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system, *i.e.* a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species (Fig. 1a). 
+This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) for a given host-microbiota system, *i.e.* a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species typically measured using metabarcoding techniques (Fig. 1a). 
 
-This phylogenetic comparative approach apply the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
+This phylogenetic comparative approach applies the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Fig. 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Fig. 1a). 
 
 <p align="center">
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
@@ -22,9 +22,7 @@ ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lam
 
 
 
-**Citation:** Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon
-,
-*Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota*, bioRxiv, [doi: https://doi.org/10.1101/XXXXX](https://www.biorxiv.org/).
+**Citation:** Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon, *Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota*, bioRxiv, [doi: https://doi.org/10.1101/XXXXX](https://www.biorxiv.org/).
 
 
 **Contact:** Benoît Perez-Lamarque (benoit.perez.lamarque@gmail.com) and Guilhem Sommeria-Klein (guilhem.sk@gmail.com)
@@ -82,11 +80,11 @@ tree <- read.tree("tree_Cetartiodactyla.tre")
 
 # Open the table with the mean abundances of the main bacterial orders in the gut microbiota of each Cetartiodactyla species
 table <- t(read.table("table_bacterial_orders_Cetartiodactyla.txt", header=TRUE, sep="\t"))
-# each row corresponds to a Cetartiodactyla species, and each column to a bacterial order (there are a total of 14 bacterial orders)
+# each row corresponds to a Cetartiodactyla species and each column to a bacterial order (there are a total of 14 bacterial orders)
 
 ```
 
-NBB: The Certardiodactyla dataset is only composed on 33 host species, which is not enought for having very robust and accurate parameters estimates (ideally, we recommend >50 host species and >5 microbial taxa), but ABDOMEN can be run quickly of this small dataset for demonstration. 
+NB: The Certardiodactyla dataset is only composed of 33 host species, which is not enough for having very robust and accurate parameters estimates (ideally, we recommend >50 host species and >5 microbial taxa), but ABDOMEN can be run quickly on this small dataset for demonstration. 
 
 
 The following parameters must be specified to run ABDOMEN:
@@ -97,12 +95,12 @@ name <- "run_Cetartiodactyla_bacterial_orders" # the name of the run
 
 code_path <- getwd() # indicates where the stan codes are stored (here, there are directly stored in the working directory)
 
-detection_threshold <- 1e-05 # the detection threshold: below this threshold, we assume that we cannot detect a given microbial taxa. Then, all relative abundances below this threshold are set to this threshold. 
+detection_threshold <- 1e-05 # the detection threshold: below this threshold, we assume that we cannot detect the microbial taxa (either because it is not present or because we cannot detect very rare taxa with metabarcoding techniques). Then, all relative abundances below this threshold are set to this threshold. 
 
 seed <- 3 # seed for reproductibility
 
-mean_prior_logY <- 0 # mean value for the Gaussian prior of logY (the latent variable that correspond to the total microbial abundances, relative to the ancestral ones)
-sd_prior_logY <- 2  # standart deviation for the Gaussian prior of logY (the latent variable that correspond to the total microbial abundances, relative to the ancestral ones)
+mean_prior_logY <- 0 # mean value for the Gaussian prior of logY (the latent variables that correspond to the total microbial abundances, relative to the ancestral ones)
+sd_prior_logY <- 2  # standard deviation for the Gaussian prior of logY (the latent variables that correspond to the total microbial abundances, relative to the ancestral ones)
 
 nb_cores <- 4 # number of cores to run the analyses
 chains <-  4 # number of chains for the inference
@@ -138,7 +136,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/convergence_chains_run_Cetartiodactyla_bacterial_orders_lambda.png" width="350">
 </p>
 <p align="center">
-    <b>Figure 2: Convergence of the 4 chains of ABDOMEN for the estimation of Pagel's $\lambda$, $i.e.$ the measure of phylosymbiosis. Here, $\lambda$ is estimated at 0.23 (95% CI: [0.1; 0.36]).</b>
+    <b>Figure 2: Convergence of the 4 chains of ABDOMEN for the estimation of Pagel's lambda, i.e. the measure of phylosymbiosis. Here, lambda is estimated at 0.23 (95% CI: [0.1; 0.36]).</b>
 </p>
 
 
@@ -146,7 +144,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_Z0_run_Cetartiodactyla_bacterial_orders.png" width="350">
 </p>
 <p align="center">
-    <b>Figure 3: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root).</b>
+    <b>Figure 3: Estimated ancestral microbiota composition of Cetartiodactyla (Z0; mean of the posterior distribution at the root).</b>
 </p>
 
 
@@ -154,7 +152,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_ancestral_states_run_Cetartiodactyla_bacterial_orders.png" width="350">
 </p>
 <p align="center">
-    <b>Figure 4: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root and generalized least squares estimates at internal nodes).</b>
+    <b>Figure 4: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root (Z0) and generalized least squares estimates at internal nodes).</b>
 </p>
 
 
@@ -162,7 +160,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_variances_run_Cetartiodactyla_bacterial_orders.png" width="350">
 </p>
 <p align="center">
-    <b>Figure 5: Estimated variances for each bacterial order in the gut microbiota of Cetartiodactyla (mean of the posterior distribution).</b>
+    <b>Figure 5: Estimated variances for each bacterial order in the gut microbiota of Cetartiodactyla (diagonal elements of R; mean of the posterior distribution).</b>
 </p>
 
 <p align="center">
@@ -172,7 +170,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_covariances_run_Cetartiodactyla_bacterial_orders_signif.png" width="350">
 </p>
 <p align="center">
-    <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (mean of the posterior distribution) All covariances are represented in (a), while only significant ones are in (b; a significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small).</b>
+    <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (off-diagonal elements of R; mean of the posterior distribution). All covariances are represented in (a), while only significant ones are in (b; a significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small).</b>
 </p>
 
 
@@ -180,7 +178,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
 
 # Assessing the significance of phylosymbiosis:
 
-To assess the significance of phylosymbiosis, one can perform permutatations. Here, we will randomly permutate all the host species:
+To assess the significance of phylosymbiosis, one can perform permutations. Here, we will randomly permutate all the host species:
 
 ```r
 
@@ -190,6 +188,7 @@ seed <- 100
 set.seed(seed)
 
 table_random <- table[sample(tree$tip.label),] # randomly permutates all the Cetartiodactyla species:
+rownames(table_random) <- rownames(table)
 
 fit_summary <- ABDOMEN(tree, table_random, name_random, 
                        code_path = code_path,
@@ -199,7 +198,7 @@ fit_summary <- ABDOMEN(tree, table_random, name_random,
 
 ABDOMEN_process_output(tree, table_random, name, fit_summary)
 
-# this step must we replicated a large number of times (e.g. 100 with different seeds) to compare the original lambda values with the ones obtained when permuttatting the dataset. 
+# this step must be replicated a large number of times (e.g. 100 with different seeds) to compare the original lambda values with the ones obtained when permutatting the dataset. 
 
 ```
 
