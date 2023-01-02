@@ -56,7 +56,7 @@ install.packages("ggplot2", "mvMORPH", "RPANDA", "rstan", "RColorBrewer")
 
 
 
-First, you can set your working directory and load the packages and functions:
+First, you can set your working directory and **load the packages and functions**:
 
 ```r
 
@@ -74,7 +74,7 @@ source("ABDOMEN.R")
 
 ```
 
-Then, you can load the example dataset of the gut microbiota of Certardiodactyla (from Song et al., 2020) that can be downloaded from the folder ['example'](https://github.com/BPerezLamarque/ABDOMEN/tree/main/example/): 
+Then, you can **load the example dataset** of the gut microbiota of Certardiodactyla (from Song et al., 2020) that can be downloaded from the folder ['example'](https://github.com/BPerezLamarque/ABDOMEN/tree/main/example/): 
 
 ```r
 
@@ -90,7 +90,7 @@ table <- t(read.table("table_bacterial_orders_Cetartiodactyla.txt", header=TRUE,
 NB: The Certardiodactyla dataset is only composed of 33 host species, which is not enough for having very robust and accurate parameters estimates (ideally, we recommend >50 host species and >5 microbial taxa), but ABDOMEN can be run quickly on this small dataset for demonstration. 
 
 
-The following parameters must be specified to run ABDOMEN:
+The following **parameters must be specified** to run ABDOMEN:
 
 ```r
 
@@ -112,7 +112,7 @@ iter <-  2000 # total number of iterations in STAN
 
 ```
 
-Now you can run ABDOMEN: 
+Now you can **run ABDOMEN**: 
 
 ```r
 
@@ -126,7 +126,7 @@ fit_summary <- ABDOMEN(tree, table, name,
 
 # Plotting outputs:
 
-You can now automatically plot the estimated variances and covariances ($R$), the ancestral microbiota composition ($Z_0$), as well as the ancestral microbiota composition in each node of the phylogeny:
+You can now automatically check the convergence of the chains and plot the estimated variances and covariances between microbial taxa ($R$), the ancestral microbiota composition ($Z_0$), as well as the ancestral microbiota composition in each node of the phylogeny:
 
 ```r
 
