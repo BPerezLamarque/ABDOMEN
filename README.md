@@ -173,7 +173,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_covariances_run_Cetartiodactyla_bacterial_orders_signif.png" width="350">
 </p>
 <p align="center">
-    <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (off-diagonal elements of R; mean of the posterior distribution). All covariances are represented in (a), while only significant ones are in (b; a significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small).</b>
+    <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (off-diagonal elements of R; mean of the posterior distribution). All covariances are represented in (a), while only significant ones are in (b). A significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small.</b>
 </p>
 
 
@@ -181,7 +181,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
 
 # Assessing the significance of phylosymbiosis:
 
-To assess the significance of phylosymbiosis, one can perform permutations. Here, we will randomly permutate all the host species:
+To assess the significance of phylosymbiosis, one can perform permutations. Here, we permutate all the host species at random:
 
 ```r
 
@@ -193,13 +193,13 @@ set.seed(seed)
 table_random <- table[sample(tree$tip.label),] # randomly permutates all the Cetartiodactyla species:
 rownames(table_random) <- rownames(table)
 
-fit_summary <- ABDOMEN(tree, table_random, name_random, 
+fit_summary_permut <- ABDOMEN(tree, table_random, name_random, 
                        code_path = code_path,
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
 
-ABDOMEN_process_output(tree, table_random, name, fit_summary)
+ABDOMEN_process_output(tree, table_random, name_random, fit_summary_permut)
 
 # this step must be replicated a large number of times (e.g. 100 with different seeds) to compare the original lambda values with the ones obtained when permutatting the dataset. 
 
