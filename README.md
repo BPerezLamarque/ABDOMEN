@@ -151,7 +151,7 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
 
 
 <p align="center">
-    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_Z0_run_Cetartiodactyla_bacterial_orders.png" width="350">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_ancestral_states_run_Cetartiodactyla_bacterial_orders.png" width="350">
 </p>
 <p align="center">
     <b>Figure 4: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root and generalized least squares estimates at internal nodes).</b>
@@ -166,7 +166,10 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
 </p>
 
 <p align="center">
-    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_variances_run_Cetartiodactyla_bacterial_orders.png" width="350">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_covariances_run_Cetartiodactyla_bacterial_orders.png" width="350">
+</p>
+<p align="center">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_covariances_run_Cetartiodactyla_bacterial_orders_signif.png" width="350">
 </p>
 <p align="center">
     <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (mean of the posterior distribution) All covariances are represented in (a), while only significant ones are in (b; a significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small).</b>
