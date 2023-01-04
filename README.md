@@ -150,6 +150,8 @@ Besides the plots, you can also directly extract the estimated parameter values:
 original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary) # gives the mean estimated Pagel's lambda and its 95% CI
 original_lambda
 
+ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbiota composition and the 95% CI of each microbial taxa
+
 ```
 
 
@@ -170,7 +172,11 @@ original_lambda
 
 ```r
 
-ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbiota composition and the 95% CI of each microbial taxa
+R_matrices <- ABDOMEN_extract_R(tree, table, fit_summary) 
+R_matrices$R #  gives the mean variance-covariance matrix R between microbial taxa
+R_matrices$R_lower_bound #  gives the lower bound of the 95% CI of the variance-covariance matrix R 
+R_matrices$R_upper_bound #  gives the upper bound of the 95% CI of the variance-covariance matrix R 
+R_matrices$R_signif #  only outputs the significant covariances (i.e. covariances for which 0 is not in the 95% CI)
 
 ```
 
@@ -191,15 +197,7 @@ ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbi
     <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (off-diagonal elements of R; mean of the posterior distribution). All covariances are represented in (a), while only significant ones are in (b). A significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small.</b>
 </p>
 
-```r
 
-R_matrices <- ABDOMEN_extract_R(tree, table, fit_summary) 
-R_matrices$R #  gives the mean variance-covariance matrix R between microbial taxa
-R_matrices$R_lower_bound #  gives the lower bound of the 95% CI of the variance-covariance matrix R 
-R_matrices$R_upper_bound #  gives the upper bound of the 95% CI of the variance-covariance matrix R 
-R_matrices$R_signif #  only outputs the significant covariances (i.e. covariances for which 0 is not in the 95% CI)
-
-```
 
 
 # Assessing the significance of phylosymbiosis:
@@ -245,7 +243,8 @@ for (seed in 1:nb_permutations){
     list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut))
 }
 
-length(which(list_lambda_permutations[,1]>=original_lambda[1]))/nb_permutations # p-value for the significance of phylosymbiosis
+# p-value for the significance of phylosymbiosis
+length(which(list_lambda_permutations[,1]>=original_lambda[1]))/nb_permutations 
 
 ```
 
