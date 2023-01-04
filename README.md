@@ -9,7 +9,7 @@ This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota Evolut
 This phylogenetic comparative approach applies the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Figure 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with a variance-covariance matrix $R$ (Figure 1a). 
 
 <p align="center">
-    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
+    <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="600">
 </p>
 
 <p align="center">
@@ -147,9 +147,11 @@ Besides the plots, you can also directly extract the estimated parameter values:
 
 ```r
 
+# Pagel's lambda (the measure of phylosymbiosis):
 original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary) # gives the mean estimated Pagel's lambda and its 95% CI
 original_lambda
 
+# The ancestral microbiota composition (Z0):
 ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbiota composition and the 95% CI of each microbial taxa
 
 ```
@@ -171,7 +173,7 @@ ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbi
 </p>
 
 ```r
-
+# The microbial integration (R; variance-covariance matrix between microbial taxa):
 R_matrices <- ABDOMEN_extract_R(tree, table, fit_summary) 
 R_matrices$R #  gives the mean variance-covariance matrix R between microbial taxa
 R_matrices$R_lower_bound #  gives the lower bound of the 95% CI of the variance-covariance matrix R 
@@ -243,7 +245,7 @@ for (seed in 1:nb_permutations){
     list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut))
 }
 
-# p-value for the significance of phylosymbiosis
+# p-value for the significance of phylosymbiosis:
 length(which(list_lambda_permutations[,1]>=original_lambda[1]))/nb_permutations 
 
 ```
