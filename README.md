@@ -22,7 +22,7 @@ ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lam
 
 
 
-**Citation:** Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon, *Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota*, bioRxiv, [doi: https://doi.org/10.1101/XXXXX](https://www.biorxiv.org/).
+**Citation:** Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon, *Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota*, bioRxiv, [doi: https://doi.org/10.1101/2023.01.03.522549](https://www.biorxiv.org/content/10.1101/2023.01.03.522549v1).
 
 
 **Contact:** Benoît Perez-Lamarque (benoit.perez.lamarque@gmail.com) and Guilhem Sommeria-Klein (guilhem.sk@gmail.com)
