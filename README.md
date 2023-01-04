@@ -6,7 +6,7 @@
 
 This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) using R for a given host-microbiota system, *i.e.* a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species typically measured using metabarcoding techniques (Figure 1a). 
 
-This phylogenetic comparative approach applies the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Figure 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with variance-covariance matrix $R$ (Figure 1a). 
+This phylogenetic comparative approach applies the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Figure 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with a variance-covariance matrix $R$ (Figure 1a). 
 
 <p align="center">
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/ABDOMEN.png" width="500">
@@ -143,6 +143,16 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
 </p>
 
 
+Besides the plots, you can also directly extract the estimated parameter values: 
+
+```r
+
+original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary) # gives the mean estimated Pagel's lambda and its 95% CI
+original_lambda
+
+```
+
+
 <p align="center">
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_Z0_run_Cetartiodactyla_bacterial_orders.png" width="350">
 </p>
@@ -158,6 +168,11 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <b>Figure 4: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root (Z0) and generalized least squares estimates at internal nodes).</b>
 </p>
 
+```r
+
+ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbiota composition and the 95% CI of each microbial taxa
+
+```
 
 <p align="center">
     <img src="https://github.com/BPerezLamarque/ABDOMEN/blob/main/example/plot_ABDOMEN/results_variances_run_Cetartiodactyla_bacterial_orders.png" width="350">
@@ -176,7 +191,15 @@ ABDOMEN_process_output(tree, table, name, fit_summary)
     <b>Figure 6: Estimated covariances between bacterial order in the gut microbiota of Cetartiodactyla (off-diagonal elements of R; mean of the posterior distribution). All covariances are represented in (a), while only significant ones are in (b). A significant covariance means that 0 is not in its 95% CI - many covariances are not significant here because the dataset is too small.</b>
 </p>
 
+```r
 
+R_matrices <- ABDOMEN_extract_R(tree, table, fit_summary) 
+R_matrices$R #  gives the mean variance-covariance matrix R between microbial taxa
+R_matrices$R_lower_bound #  gives the lower bound of the 95% CI of the variance-covariance matrix R 
+R_matrices$R_upper_bound #  gives the upper bound of the 95% CI of the variance-covariance matrix R 
+R_matrices$R_signif #  only outputs the significant covariances (i.e. covariances for which 0 is not in the 95% CI)
+
+```
 
 
 # Assessing the significance of phylosymbiosis:
@@ -193,19 +216,38 @@ set.seed(seed)
 table_random <- table[sample(tree$tip.label),] # randomly permutates all the Cetartiodactyla species:
 rownames(table_random) <- rownames(table)
 
-fit_summary_permut <- ABDOMEN(tree, table_random, name_random, 
+fit_summary_permut <- ABDOMEN(tree, table_random, name = name_random, 
                        code_path = code_path,
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
 
-ABDOMEN_process_output(tree, table_random, name_random, fit_summary_permut)
-
-# this step must be replicated a large number of times (e.g. 100 with different seeds) to compare the original lambda values with the ones obtained when permutatting the dataset. 
+ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut)
 
 ```
 
+This step must be replicated a large number of times (e.g. 100 with different seeds) to compare the original lambda values with the ones obtained when permutating the dataset and obtain a p-value. For instance :
 
+```r
+
+nb_permutations <- 100
+list_lambda_permutations <- c()
+for (seed in 1:nb_permutations){
+    set.seed(seed)
+    name_random <- paste0("run_Cetartiodactyla_bacterial_orders_permutation_",seed)
+    table_random <- table[sample(tree$tip.label),] # randomly permutates all the Cetartiodactyla species:
+    rownames(table_random) <- rownames(table)
+    fit_summary_permut <- ABDOMEN(tree, table_random, name = name_random, 
+                       code_path = code_path,
+                       detection_threshold = detection_threshold, seed = seed, 
+                       mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
+                       nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
+    list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut))
+}
+
+length(which(list_lambda_permutations[,1]>=original_lambda[1]))/nb_permutations # p-value for the significance of phylosymbiosis
+
+```
 
 NB: More constraint permutations can be done, *e.g.* only permuting species having a similar diet to test the effect of diet conservatism on phylosymbiosis. 
 

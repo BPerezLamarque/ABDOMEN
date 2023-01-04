@@ -255,3 +255,111 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary){
   
 }
 
+
+
+
+ABDOMEN_extract_Z0 <- function(tree, table, fit_summary){
+  
+  # scale the tree
+  tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
+  
+  # scale the abundance per row (each row sum must be equal to 1)
+  for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  
+  # reorder table as tree$tip.label
+  table <- table[tree$tip.label,]
+  
+  while (length(table[which(table<detection_threshold)])>0){
+    table[table<detection_threshold] <- detection_threshold
+    for(i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  }
+  
+  p <- ncol(table)
+  n <- nrow(table)
+  
+  Z0 <- fit_summary$summary[1:p,"mean"]
+  
+  Z0_2.5 <- fit_summary$summary[1:p,"2.5%"]
+  Z0_97.5 <- fit_summary$summary[1:p,"97.5%"]
+  
+  names(Z0) <- colnames(table)
+  names(Z0_2.5) <- colnames(table)
+  names(Z0_97.5) <- colnames(table)
+  
+  
+  all_Z0 <- data.frame(Z0=(Z0), lower_bound=(Z0_2.5), upper_bound=(Z0_97.5))
+  
+  return(all_Z0)
+  
+}
+
+
+ABDOMEN_extract_lambda <- function(tree, table, fit_summary){
+  
+  # scale the tree
+  tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
+  
+  # scale the abundance per row (each row sum must be equal to 1)
+  for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  
+  # reorder table as tree$tip.label
+  table <- table[tree$tip.label,]
+  
+  while (length(table[which(table<detection_threshold)])>0){
+    table[table<detection_threshold] <- detection_threshold
+    for(i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  }
+  
+  p <- ncol(table)
+  n <- nrow(table)
+  
+  lambda <- round(fit_summary$summary[nrow(fit_summary$summary)-1,1],2)
+  lambda_2.5 <- round(fit_summary$summary[nrow(fit_summary$summary)-1,4],2)
+  lambda_97.5 <- round(fit_summary$summary[nrow(fit_summary$summary)-1,8],2)
+  
+  all_lambda <- c(lambda,lambda_2.5, lambda_97.5)
+  names(all_lambda) <- c("Pagels_lambda", "lower_bound", "upper_bound")
+  
+  return(all_lambda)
+  
+}
+
+ABDOMEN_extract_R <- function(tree, table, fit_summary){
+  
+  # scale the tree
+  tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
+  
+  # scale the abundance per row (each row sum must be equal to 1)
+  for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  
+  # reorder table as tree$tip.label
+  table <- table[tree$tip.label,]
+  
+  while (length(table[which(table<detection_threshold)])>0){
+    table[table<detection_threshold] <- detection_threshold
+    for(i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  }
+  
+  p <- ncol(table)
+  n <- nrow(table)
+  
+  R <- fit_summary$summary[(2*n+p+1):(2*n+p+p*p),1]
+  R_mat <- matrix(R, nrow=p, byrow = T)
+  
+  R_mat_2.5 <- matrix(fit_summary$summary[(2*n+p+1):(2*n+p+p*p),"2.5%"], nrow=p, byrow = T)
+  R_mat_97.5 <- matrix(fit_summary$summary[(2*n+p+1):(2*n+p+p*p),"97.5%"], nrow=p, byrow = T)
+  
+  rownames(R_mat) <- colnames(R_mat) <- colnames(table)
+  rownames(R_mat_2.5) <- colnames(R_mat_2.5) <- colnames(table)
+  rownames(R_mat_97.5) <- colnames(R_mat_97.5) <- colnames(table)
+  
+  R_signif <- R_mat
+  R_signif[intersect(which(R_mat_2.5<0), which(R_mat_97.5>0))] <- 0
+  
+  
+  all_R <- list(R=R_mat, R_lower_bound=R_mat_2.5, R_upper_bound=R_mat_97.5, R_signif=R_signif)
+  
+  return(all_R)
+
+}
+
