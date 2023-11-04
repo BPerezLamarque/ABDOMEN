@@ -4,7 +4,7 @@
 
 
 
-This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) using R for a given host-microbiota system, *i.e.* a fixed, bifurcating host phylogeny and microbiota relative abundances for each extant host species typically measured using metabarcoding techniques (Figure 1a). 
+This tutorial explains how to use ABDOMEN (A Brownian moDel Of Microbiota EvolutioN) using R for a given host-microbiota system, *i.e.* a fixed, bifurcating, calibrated host phylogeny and microbiota relative abundances for each extant host species typically measured using metabarcoding techniques (Figure 1a). 
 
 This phylogenetic comparative approach applies the multivariate Brownian motion process to compositional data. It also includes the widely-used Pagel's $\lambda$ tree transformation that quantifies phylosymbiosis by evaluating how much host phylogeny contributes to explaining interspecific variation in present-day microbiota composition (Figure 1b). ABDOMEN assumes that, from ancestral values at the root $X_0$, the log-absolute abundances of the different microbial taxa change on the host phylogeny following a multivariate Brownian motion model with a variance-covariance matrix $R$ (Figure 1a). 
 
@@ -18,7 +18,7 @@ This phylogenetic comparative approach applies the multivariate Brownian motion 
 
 Noting $X_{ij}$ the unmeasured absolute abundance of microbial taxon $j$ in host $i$, $Y_i=\sum_j X_{ij}$ the unmeasured total microbial abundance in the microbiota of host $i$, ${\tilde{Y_i}} = Y_i / Y_0$ its value relative to the unknown total microbial abundance at the root $Y_0$, and $Z_{ij}=X_{ij}/Y_i$ the measured relative abundance of microbial taxon $j$ in host $i$, we sample from the joint posterior distribution $P(\log Z_0, R, \lambda, \log {\tilde{Y_1}},...,\log {\tilde{Y_n}} | Z_{11},…,Z_{ij},…,Z_{np},C)$, where $Z_0$ is the vector of relative abundances at the root, $n$ is the number of host species, $p$ is the number of microbial taxa, and $C$ is the phylogenetic variance-covariance matrix. ABDOMEN performs this sampling using a No U-turn Hamiltonian Markov Chain Monte Carlo algorithm implemented via the Stan probabilistic programming language.
 
-ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lambda$), microbiota integration (reflected in the $R$ matrix), and ancestral microbiota composition (given by $Z_0$). 
+ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lambda$), microbiota integration (covariances between microbial taxa reflected in the $R$ matrix), and ancestral microbiota composition (given by $Z_0$). 
 
 
 
