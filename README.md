@@ -22,7 +22,7 @@ ABDOMEN thus outputs  an estimate of phylosymbiosis (measured as Pagel’s $\lam
 
 
 
-**Citation:** Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon, *Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota*, bioRxiv, [doi: https://doi.org/10.1101/2023.01.03.522549](https://www.biorxiv.org/content/10.1101/2023.01.03.522549v1).
+**Citation:** Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon, *Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota*, Molecular Biology and Evolution, Volume 40, Issue 7, July 2023, msad144, [doi: https://doi.org/10.1093/molbev/msad144](https://doi.org/10.1093/molbev/msad144).
 
 
 **Contact:** Benoît Perez-Lamarque (benoit.perez.lamarque@gmail.com) and Guilhem Sommeria-Klein (guilhem.sk@gmail.com)
@@ -80,6 +80,7 @@ Then, you can **load the example dataset** of the gut microbiota of Certardiodac
 
 # Open the phylogenetic tree of the Cetartiodactyla
 tree <- read.tree("tree_Cetartiodactyla.tre")
+# Please note that the phylogenetic tree must be rooted, binary, and ultrametric to run ABDOMEN. 
 
 # Open the table with the mean abundances of the main bacterial orders in the gut microbiota of each Cetartiodactyla species
 table <- t(read.table("table_bacterial_orders_Cetartiodactyla.txt", header=TRUE, sep="\t"))
