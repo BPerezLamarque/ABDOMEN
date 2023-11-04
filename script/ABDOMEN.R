@@ -4,6 +4,9 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
   
+  if (!is.rooted(tree)){print("WARNING: Your tree is not rooted. Please root your tree before running ABDOMEN.")}
+  if (!is.rooted(tree)){print("WARNING: Your tree is not ultrametric. Please calibrate your tree before running ABDOMEN. If and only if, the tree is non ultrametric because of numerical precisions, you can use the function 'force.ultrametric()'.")}
+  
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
   
@@ -99,7 +102,7 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
 }
 
 
-ABDOMEN_process_output <- function(tree, table, name, fit_summary){
+ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = getwd()){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
@@ -144,7 +147,9 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary){
   lambda_97.5 <- round(fit_summary$summary[nrow(fit_summary$summary)-1,8],2)
   print(paste0("Pagel's lambda: ", lambda, ", 95% CI: [",lambda_2.5, "; ", lambda_97.5, "]"))
   
-  pdf(paste0("plot_ABDOMEN/results_Z0_",name, ".pdf"), width=5, height=7)
+  dir.create(file.path(code_path, "plot_ABDOMEN/"), showWarnings = FALSE)
+  
+  pdf(paste0(code_path, "/plot_ABDOMEN/results_Z0_",name, ".pdf"), width=5, height=7)
   names(Z0) <- gsub("_", " - ", names(Z0))
   df=data.frame(cbind(names(Z0),Z0))
   df$V1 <- as.factor(df$V1)
@@ -157,7 +162,7 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary){
   
   # Plot Covariances
   
-  pdf(paste0("plot_ABDOMEN/results_covariances_", name, ".pdf"), width=8, height=6)
+  pdf(paste0(code_path, "/plot_ABDOMEN/results_covariances_", name, ".pdf"), width=8, height=6)
   
   R_cov <- R_mat
   diag(R_cov) <- 0
@@ -179,7 +184,7 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary){
   
   ## Plot variances Mat R 
   
-  pdf(paste0("plot_ABDOMEN/results_variances_", name, ".pdf"), width=8, height=6)
+  pdf(paste0(code_path, "/plot_ABDOMEN/results_variances_", name, ".pdf"), width=8, height=6)
   
   R_var <- R_mat*0
   diag(R_var) <- diag(R_mat)
@@ -234,24 +239,27 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary){
   
   
   # states at the nodes
-  state_nodes <- (AY%*%pseudoinverse(vY)%*%(logX-one%*%logZ0))+(one[1:(n-1),,drop=F]%*%logZ0)
-  colnames(state_nodes) = colnames(T)
-  rownames(state_nodes) = paste("node_",n+1:Nnode(tree), sep="")
-  
-  # plot ancestral states 
-  
-  p12 <- ggtree::ggtree(tree) + ggtree::theme_tree(bgcolor = "transparent") + ggtree::geom_treescale(x=0, y=1, width=0, color="transparent")
-  
-  Z0_nodes <- data.frame(exp(state_nodes))
-  Z0_nodes$node <- n+1:Nnode(tree)
-  pies <- ggtree::nodepie(Z0_nodes, cols=1:(ncol(Z0_nodes)-1), alpha=1)
-  p12_nodes <- ggtree::inset(p12, pies,width=0.1, height=0.1 )
-  
-  
-  pdf(paste0("plot_ABDOMEN/results_ancestral_states_", name, ".pdf"), width=6, height=6)
-  plot(p12_nodes+ggtree::geom_tiplab(size=0) + theme(plot.margin = margin(0.75,0.75,0.75,0.75, "cm")))
-  plot(p12_nodes+ggtree::geom_tiplab(size=2) + theme(plot.margin = margin(0.75,0.75,0.75,0.75, "cm")))
-  dev.off()
+  if (Nnode(tree)==n-1){ # the tree must be rooted and binary
+    
+    state_nodes <- (AY%*%pseudoinverse(vY)%*%(logX-one%*%logZ0))+(one[1:(n-1),,drop=F]%*%logZ0)
+    colnames(state_nodes) = colnames(T)
+    rownames(state_nodes) = paste("node_",n+1:Nnode(tree), sep="")
+    
+    # plot ancestral states 
+    
+    p12 <- ggtree::ggtree(tree) + ggtree::theme_tree(bgcolor = "transparent") + ggtree::geom_treescale(x=0, y=1, width=0, color="transparent")
+    
+    Z0_nodes <- data.frame(exp(state_nodes))
+    Z0_nodes$node <- n+1:Nnode(tree)
+    pies <- ggtree::nodepie(Z0_nodes, cols=1:(ncol(Z0_nodes)-1), alpha=1)
+    p12_nodes <- ggtree::inset(p12, pies,width=0.1, height=0.1 )
+    
+    
+    pdf(paste0(code_path, "/plot_ABDOMEN/results_ancestral_states_", name, ".pdf"), width=6, height=6)
+    plot(p12_nodes+ggtree::geom_tiplab(size=0) + theme(plot.margin = margin(0.75,0.75,0.75,0.75, "cm")))
+    plot(p12_nodes+ggtree::geom_tiplab(size=2) + theme(plot.margin = margin(0.75,0.75,0.75,0.75, "cm")))
+    dev.off()
+  }
   
 }
 
