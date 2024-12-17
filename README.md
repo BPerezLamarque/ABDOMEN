@@ -128,6 +128,7 @@ fit_summary <- ABDOMEN(tree, table, name,
 # Plotting outputs:
 
 You can now automatically check the convergence of the chains and plot the estimated variances and covariances between microbial taxa ($R$), the ancestral microbiota composition ($Z_0$), as well as the ancestral microbiota composition in each node of the phylogeny:
+
 All plots are saved as PDF files in the 'plot_ABDOMEN/' folder, which is automatically created at the location specified by the variable ``code_path`` (default: the working directory). To customize the appearance of the plots, you can directly modify the script of the function [`ABDOMEN_process_output`](https://github.com/BPerezLamarque/ABDOMEN/blob/main/script/ABDOMEN.R) function.
 
 ```r
