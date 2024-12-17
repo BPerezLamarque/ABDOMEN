@@ -97,7 +97,7 @@ The following **parameters must be specified** to run ABDOMEN:
 
 name <- "run_Cetartiodactyla_bacterial_orders" # the name of the run
 
-code_path <- getwd() # indicates where the stan codes are stored (here, there are directly stored in the working directory)
+code_path <- getwd() # indicates where the stan codes are stored (here, there are directly stored in the working directory) and where the ABDOMEN plots will be generated.
 
 detection_threshold <- 1e-05 # the detection threshold: below this threshold, we assume that we cannot detect the microbial taxa (either because it is not present or because we cannot detect very rare taxa with metabarcoding techniques). Then, all relative abundances below this threshold are set to this threshold. 
 
@@ -128,10 +128,11 @@ fit_summary <- ABDOMEN(tree, table, name,
 # Plotting outputs:
 
 You can now automatically check the convergence of the chains and plot the estimated variances and covariances between microbial taxa ($R$), the ancestral microbiota composition ($Z_0$), as well as the ancestral microbiota composition in each node of the phylogeny:
+All plots are saved as PDF files in the 'plot_ABDOMEN/' folder, which is automatically created at the location specified by the variable ``code_path`` (default: the working directory). To customize the appearance of the plots, you can directly modify the script of the function [`ABDOMEN_process_output`](https://github.com/BPerezLamarque/ABDOMEN/blob/main/script/ABDOMEN.R) function.
 
 ```r
 
-ABDOMEN_process_output(tree, table, name, fit_summary)
+ABDOMEN_process_output(tree, table, name, fit_summary, code_path)
 
 ```
 
