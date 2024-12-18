@@ -8,8 +8,6 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
   if (!is.ultrametric(tree)){print("WARNING: Your tree is not ultrametric. Please calibrate your tree before running ABDOMEN. If and only if, the tree is non ultrametric because of numerical precisions, you can use the function 'force.ultrametric()'.")}
   if (!all(tree$tip.label %in% rownames(table))){print("WARNING: Some species in the tree are not in the OTU table. Please remove these species from the phylogenetic tree before running AB.")}
   
-  tree <- ladderize(tree)
-  
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
   
@@ -109,8 +107,6 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
-  
-  tree <- ladderize(tree)
   
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
@@ -252,7 +248,7 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
     
     # plot ancestral states 
     
-    p12 <- ggtree::ggtree(tree) + ggtree::theme_tree(bgcolor = "transparent") + ggtree::geom_treescale(x=0, y=1, width=0, color="transparent")
+    p12 <- ggtree::ggtree(tree, ladderize = FALSE) + ggtree::theme_tree(bgcolor = "transparent") + ggtree::geom_treescale(x=0, y=1, width=0, color="transparent")
     
     Z0_nodes <- data.frame(exp(state_nodes))
     Z0_nodes$node <- n+1:Nnode(tree)
@@ -275,8 +271,6 @@ ABDOMEN_extract_Z0 <- function(tree, table, fit_summary){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
-  
-  tree <- ladderize(tree)
   
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
@@ -314,8 +308,6 @@ ABDOMEN_extract_lambda <- function(tree, table, fit_summary){
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
   
-  tree <- ladderize(tree)
-  
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
   
@@ -345,8 +337,6 @@ ABDOMEN_extract_R <- function(tree, table, fit_summary){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
-  
-  tree <- ladderize(tree)
   
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
