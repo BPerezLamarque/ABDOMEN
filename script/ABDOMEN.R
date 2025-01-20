@@ -1,5 +1,5 @@
 ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=1e-05, seed=3, mean_prior_logY=0, sd_prior_logY=2,
-                    nb_cores = 1, chains = 4, warmup = 500, iter = 1000){
+                    nb_cores = 1, chains = 4, warmup = 500, iter = 1000, plot_chains=TRUE){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
@@ -64,37 +64,40 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
   
   # Process the output of the run
   
-  a <- extract(fit, permuted = FALSE) 
-  a_warmup <- extract(fit, permuted = FALSE, inc_warmup = TRUE)
-  
-  list_parameters <- c("lambda", paste0("Z0[",1:p,"]"), sort(apply(expand.grid(paste0("R[",1:p,","), paste0(1:p,"]")), 1, paste, collapse="")), paste0("logY[",1:n,"]"))
-  
-  # Check the convergence of the chain
-  list_Rhat <- c()
-  list_ESS_bulk <- c()
-  list_ESS_tail <- c()
-  
-  pdf(paste0("plot_ABDOMEN/convergence_chains_",name,".pdf"),width=4.5, height=4)
-  for (param in  list_parameters){
-    min <- min(as.vector(c(a[,,param])))
-    max <- max(as.vector(c(a[,,param])))
+  if (plot_chains){
     
-    Rhat <- Rhat(a_warmup[,,param])
-    ESS_bulk <- ess_bulk(a_warmup[,,param]) 
-    ESS_tail <- ess_tail(a_warmup[,,param])
-    list_Rhat <- c(list_Rhat, Rhat)
-    list_ESS_bulk <- c(list_ESS_bulk, ESS_bulk)
-    list_ESS_tail <- c(list_ESS_tail, ESS_tail)
+    a <- extract(fit, permuted = FALSE) 
+    a_warmup <- extract(fit, permuted = FALSE, inc_warmup = TRUE)
     
-    thin=5 # only for plotting 
-    chain=1
-    (plot(a[seq(1,(iter-warmup)/2,thin),chain,param], type="l", ylim=c(min, max), ylab = param, xlab=paste0("thin=",thin*2), col=chain, main=paste0("Rhat=",round(Rhat,3), ", ESS=", round(ESS_bulk))))
-    for (chain in 2:chains){
-      par(new=TRUE)
-      (plot(a[seq(1,(iter-warmup)/2,thin),chain,param], type="l", ylim=c(min, max), col=chain, ylab = "", xlab="", axes = F))
+    list_parameters <- c("lambda", paste0("Z0[",1:p,"]"), sort(apply(expand.grid(paste0("R[",1:p,","), paste0(1:p,"]")), 1, paste, collapse="")), paste0("logY[",1:n,"]"))
+    
+    # Check the convergence of the chain
+    list_Rhat <- c()
+    list_ESS_bulk <- c()
+    list_ESS_tail <- c()
+    
+    pdf(paste0("plot_ABDOMEN/convergence_chains_",name,".pdf"),width=4.5, height=4)
+    for (param in  list_parameters){
+      min <- min(as.vector(c(a[,,param])))
+      max <- max(as.vector(c(a[,,param])))
+      
+      Rhat <- Rhat(a_warmup[,,param])
+      ESS_bulk <- ess_bulk(a_warmup[,,param]) 
+      ESS_tail <- ess_tail(a_warmup[,,param])
+      list_Rhat <- c(list_Rhat, Rhat)
+      list_ESS_bulk <- c(list_ESS_bulk, ESS_bulk)
+      list_ESS_tail <- c(list_ESS_tail, ESS_tail)
+      
+      thin=5 # only for plotting 
+      chain=1
+      (plot(a[seq(1,(iter-warmup)/2,thin),chain,param], type="l", ylim=c(min, max), ylab = param, xlab=paste0("thin=",thin*2), col=chain, main=paste0("Rhat=",round(Rhat,3), ", ESS=", round(ESS_bulk))))
+      for (chain in 2:chains){
+        par(new=TRUE)
+        (plot(a[seq(1,(iter-warmup)/2,thin),chain,param], type="l", ylim=c(min, max), col=chain, ylab = "", xlab="", axes = F))
+      }
     }
+    dev.off()
   }
-  dev.off()
   
   fit_summary <- summary(fit)
   
@@ -103,7 +106,8 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
 }
 
 
-ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = getwd()){
+ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = getwd(),
+                                   detection_threshold=1e-05, list_colors=NULL){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
@@ -120,6 +124,14 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
   }
   
   
+  # Determine the color for each microbial taxon
+  if (is.null(list_colors)){
+    list_colors <- scales::hue_pal()(ncol(table))
+    names(list_colors) <- colnames(table)
+  }
+  
+  
+  
   p <- ncol(table)
   n <- nrow(table)
   
@@ -134,10 +146,10 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
   
   
   R <- fit_summary$summary[(2*n+p+1):(2*n+p+p*p),1]
-  R_mat <- matrix(R, nrow=p, byrow = T)
+  R_mat <- matrix(R, nrow=p, byrow = TRUE)
   
-  R_mat_2.5 <- matrix(fit_summary$summary[(2*n+p+1):(2*n+p+p*p),"2.5%"], nrow=p, byrow = T)
-  R_mat_97.5 <- matrix(fit_summary$summary[(2*n+p+1):(2*n+p+p*p),"97.5%"], nrow=p, byrow = T)
+  R_mat_2.5 <- matrix(fit_summary$summary[(2*n+p+1):(2*n+p+p*p),"2.5%"], nrow=p, byrow = TRUE)
+  R_mat_97.5 <- matrix(fit_summary$summary[(2*n+p+1):(2*n+p+p*p),"97.5%"], nrow=p, byrow = TRUE)
   
   rownames(R_mat) <- colnames(R_mat) <- colnames(table)
   rownames(R_mat_2.5) <- colnames(R_mat_2.5) <- colnames(table)
@@ -243,22 +255,22 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
   if (Nnode(tree)==n-1){ # the tree must be rooted and binary
     
     state_nodes <- (AY%*%pseudoinverse(vY)%*%(logX-one%*%logZ0))+(one[1:(n-1),,drop=F]%*%logZ0)
-    colnames(state_nodes) = colnames(T)
+    colnames(state_nodes) = colnames(table)
     rownames(state_nodes) = paste("node_",n+1:Nnode(tree), sep="")
     
     # plot ancestral states 
     
-    p12 <- ggtree::ggtree(tree, ladderize = FALSE) + ggtree::theme_tree(bgcolor = "transparent") + ggtree::geom_treescale(x=0, y=1, width=0, color="transparent")
+    p12 <- ggtree::ggtree(tree, ladderize = FALSE) + ggtree::theme_tree(bgcolor = "transparent") + ggtree::geom_treescale(x=1.15, y=1, width=0, color="transparent")
     
     Z0_nodes <- data.frame(exp(state_nodes))
     Z0_nodes$node <- n+1:Nnode(tree)
     pies <- ggtree::nodepie(Z0_nodes, cols=1:(ncol(Z0_nodes)-1), alpha=1)
-    p12_nodes <- ggtree::inset(p12, pies,width=0.1, height=0.1 )
+    p12_nodes <- ggtree::inset(p12, pies, width=0.1, height=0.1 )
     
     
     pdf(paste0(code_path, "/plot_ABDOMEN/results_ancestral_states_", name, ".pdf"), width=6, height=6)
-    plot(p12_nodes+ggtree::geom_tiplab(size=0) + theme(plot.margin = margin(0.75,0.75,0.75,0.75, "cm")))
-    plot(p12_nodes+ggtree::geom_tiplab(size=2) + theme(plot.margin = margin(0.75,0.75,0.75,0.75, "cm")))
+    plot(p12_nodes+ggtree::geom_tiplab(size=0) + theme(plot.margin = margin(0.1,0.1,0.1,0.1, "cm")))
+    plot(p12_nodes+ggtree::geom_tiplab(size=2) + theme(plot.margin = margin(0.1,0.1,0.1,0.1, "cm")))
     dev.off()
   }
   
@@ -267,7 +279,7 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
 
 
 
-ABDOMEN_extract_Z0 <- function(tree, table, fit_summary){
+ABDOMEN_extract_Z0 <- function(tree, table, fit_summary, detection_threshold=1e-05){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
@@ -295,7 +307,6 @@ ABDOMEN_extract_Z0 <- function(tree, table, fit_summary){
   names(Z0_2.5) <- colnames(table)
   names(Z0_97.5) <- colnames(table)
   
-  
   all_Z0 <- data.frame(Z0=(Z0), lower_bound=(Z0_2.5), upper_bound=(Z0_97.5))
   
   return(all_Z0)
@@ -303,7 +314,7 @@ ABDOMEN_extract_Z0 <- function(tree, table, fit_summary){
 }
 
 
-ABDOMEN_extract_lambda <- function(tree, table, fit_summary){
+ABDOMEN_extract_lambda <- function(tree, table, fit_summary, detection_threshold=1e-05){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
@@ -333,7 +344,7 @@ ABDOMEN_extract_lambda <- function(tree, table, fit_summary){
   
 }
 
-ABDOMEN_extract_R <- function(tree, table, fit_summary){
+ABDOMEN_extract_R <- function(tree, table, fit_summary, detection_threshold=1e-05){
   
   # scale the tree
   tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
@@ -369,6 +380,6 @@ ABDOMEN_extract_R <- function(tree, table, fit_summary){
   all_R <- list(R=R_mat, R_lower_bound=R_mat_2.5, R_upper_bound=R_mat_97.5, R_signif=R_signif)
   
   return(all_R)
-
+  
 }
 
