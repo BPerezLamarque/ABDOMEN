@@ -164,12 +164,15 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
   
   pdf(paste0(code_path, "/plot_ABDOMEN/results_Z0_",name, ".pdf"), width=5, height=7)
   names(Z0) <- gsub("_", " - ", names(Z0))
+  list_colors_plot <- list_colors
+  names(list_colors_plot) <- gsub("_", " - ", names(list_colors_plot))
   df=data.frame(cbind(names(Z0),Z0))
   df$V1 <- as.factor(df$V1)
   df$V1 <-  factor(df$V1,levels = df$V1)
   df$Z0 <- as.numeric(df$Z0)
   print(ggplot(df, aes(x="", y=Z0, fill=V1)) +
           geom_bar(stat="identity", width=1) +  guides(fill=guide_legend(title=" "))+
+          scale_fill_manual(values=list_colors_plot)+
           coord_polar("y", start=0, direction=-1) + theme_void())
   dev.off()
   
@@ -264,7 +267,7 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
     
     Z0_nodes <- data.frame(exp(state_nodes))
     Z0_nodes$node <- n+1:Nnode(tree)
-    pies <- ggtree::nodepie(Z0_nodes, cols=1:(ncol(Z0_nodes)-1), alpha=1)
+    pies <- ggtree::nodepie(Z0_nodes, cols=1:(ncol(Z0_nodes)-1), color=list_colors, alpha=1)
     p12_nodes <- ggtree::inset(p12, pies, width=0.1, height=0.1 )
     
     
