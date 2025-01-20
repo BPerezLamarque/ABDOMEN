@@ -141,7 +141,7 @@ names(list_colors) <- colnames(table)
 
 # Generate the PDF plots:    
 ABDOMEN_process_output(tree, table, name, fit_summary, code_path = code_path, 
-					   detection_threshold = detection_threshold, list_colors=list_colors)
+detection_threshold = detection_threshold, list_colors=list_colors)
 
 ```
 
