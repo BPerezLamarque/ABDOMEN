@@ -270,6 +270,7 @@ In addition, more constrained permutations can be done, *e.g.* only permuting sp
 
 metadata <- read.table("metadata_Cetartiodactyla.csv", header=TRUE, sep=";")
 colnames(metadata) # in this example, we will randomize the species based on their geographic location (indicated in the column "location").
+random = "location" # name of the variable used for the constrained permutations. It can be done using any kind of qualitative variable. 
 
 nb_permutations <- 100
 list_lambda_permutations <- c()
@@ -278,7 +279,6 @@ for (seed in 1:nb_permutations){
     name_random <- paste0("run_Cetartiodactyla_bacterial_orders_permutation_diet_",seed)
     
     # randomly permutate the Cetartiodactyla species having the same geographic location 
-    random = "location"
     categories <- sort(unique(metadata[,random]))
     metadata$species_random <- metadata$species
     for (cat in categories){
