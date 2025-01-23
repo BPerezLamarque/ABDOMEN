@@ -261,6 +261,43 @@ length(which(list_lambda_permutations[,1]>=original_lambda[1]))/nb_permutations
 
 ```
 
-NB: More constraint permutations can be done, *e.g.* only permuting species having a similar diet to test the effect of diet conservatism on phylosymbiosis. 
 
 
+In addition, more constrained permutations can be done, *e.g.* only permuting species having a similar diet or the same geographic location to test the effect of diet conservatism or biogeographic conservatism on phylosymbiosis:
+
+
+```r
+
+metadata <- read.table("metadata_Cetartiodactyla.csv", header=TRUE, sep=";")
+colnames(metadata) # in this example, we will randomize the species based on their geographic location (indicated in the column "location").
+
+nb_permutations <- 100
+list_lambda_permutations <- c()
+for (seed in 1:nb_permutations){
+    set.seed(seed)
+    name_random <- paste0("run_Cetartiodactyla_bacterial_orders_permutation_diet_",seed)
+    
+    # randomly permutate the Cetartiodactyla species having the same geographic location 
+    random = "location"
+    categories <- sort(unique(metadata[,random]))
+    metadata$species_random <- metadata$species
+    for (cat in categories){
+      list_index <- metadata$species_random[which(metadata[,random]==cat)]
+      metadata$species_random[which(metadata[,random]==cat)] <- list_index[sample(length(list_index))]
+    }
+    table_random <- table[metadata$species_random,]
+    rownames(table_random) <- metadata$species
+    
+    fit_summary_permut <- ABDOMEN(tree, table_random, name = name_random, 
+                       code_path = code_path,
+                       detection_threshold = detection_threshold, seed = seed, 
+                       mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
+                       nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
+    list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut))
+}
+
+# p-value for the significance of phylosymbiosis:
+length(which(list_lambda_permutations[,1]>=original_lambda[1]))/nb_permutations 
+
+
+```
