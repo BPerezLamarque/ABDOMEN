@@ -317,6 +317,86 @@ ABDOMEN_extract_Z0 <- function(tree, table, fit_summary, detection_threshold=1e-
 }
 
 
+ABDOMEN_extract_Z0_nodes <- function(tree, table, fit_summary, detection_threshold=1e-05){
+  
+  # scale the tree
+  tree$edge.length <- tree$edge.length/max(node.depth.edgelength(tree)) 
+  
+  # scale the abundance per row (each row sum must be equal to 1)
+  for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  
+  # reorder table as tree$tip.label
+  table <- table[tree$tip.label,]
+  
+  while (length(table[which(table<detection_threshold)])>0){
+    table[table<detection_threshold] <- detection_threshold
+    for(i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  }
+  
+  p <- ncol(table)
+  n <- nrow(table)
+  
+  Z0 <- fit_summary$summary[1:p,"mean"]
+  names(Z0) <- colnames(table)
+  
+  lambda <- round(fit_summary$summary[nrow(fit_summary$summary)-1,1],2)
+
+  # Ancestral states at all nodes 
+  
+  # Build a matrix with tip and internal covariances
+  vcvPhyloInternal <- function(tree){
+    nbtip <- Ntip(tree)
+    dis <- dist.nodes(tree)
+    MRCA <- mrca(tree, full = TRUE)
+    M <- dis[as.character(nbtip + 1), MRCA]
+    dim(M) <- rep(sqrt(length(M)), 2)
+    return(M)
+  }
+  
+  logX=log(table*exp(fit_summary$summary[(p+1):(p+n)]))
+  
+  logX <- logX[tree$tip.label,] # should not change anything
+  
+  # transform the tree
+  tree_lambda <- tree
+  tree_lambda$edge.length <- tree_lambda$edge.length*lambda
+  tree_lambda$edge.length[which(tree_lambda$edge[,2] %in% 1:n)] <- tree_lambda$edge.length[which(tree_lambda$edge[,2] %in% 1:n)] + (1-lambda)
+  tree_lambda$edge.length <- tree_lambda$edge.length/max(node.depth.edgelength(tree_lambda)) # useless
+  
+  # covariance for the nodes
+  V <- vcvPhyloInternal(tree_lambda)
+  indice <- (1:n)
+  AY <- V[-indice,indice]
+  vY <- V[indice,indice]
+  
+  # Ancestral state at the root
+  one <- t(rbind(rep(1,n)))
+  logZ0 <- log(Z0)
+  
+  # states at the nodes
+  if (Nnode(tree)==n-1){ # the tree must be rooted and binary
+    
+    state_nodes <- (AY%*%pseudoinverse(vY)%*%(logX-one%*%logZ0))+(one[1:(n-1),,drop=F]%*%logZ0)
+    colnames(state_nodes) = colnames(table)
+    rownames(state_nodes) = paste("node_",n+1:Nnode(tree), sep="")
+    
+    Z0_nodes <- data.frame(exp(state_nodes))
+    Z0_nodes$node <- n+1:Nnode(tree)
+    
+    Z0_nodes$MRCA <- NA
+    
+    for (i in 1:nrow(Z0_nodes)){
+      Z0_nodes[i, 1:p] <- Z0_nodes[i, 1:p]/sum(Z0_nodes[i, 1:p])
+      Z0_nodes$MRCA[i] <- paste(sort(extract.clade(tree, node=Z0_nodes$node[i])$tip.label),collapse = "-")
+    }
+  
+    return(Z0_nodes)
+
+  } else {print("Warning: the tree must be rooted and binary.")}
+}
+
+
+
 ABDOMEN_extract_lambda <- function(tree, table, fit_summary, detection_threshold=1e-05){
   
   # scale the tree

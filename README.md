@@ -159,11 +159,15 @@ Besides the plots, you can also directly extract the estimated parameter values:
 ```r
 
 # Pagel's lambda (the measure of phylosymbiosis):
-original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary) # gives the mean estimated Pagel's lambda and its 95% CI
+original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary, detection_threshold = detection_threshold) # gives the mean estimated Pagel's lambda and its 95% CI
 original_lambda
 
 # The ancestral microbiota composition (Z0):
-ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbiota composition and the 95% CI of each microbial taxa
+ABDOMEN_extract_Z0(tree, table, fit_summary, detection_threshold = detection_threshold) #  gives the mean ancestral microbiota composition and the 95% CI of each microbial taxa
+
+# The ancestral microbiota composition estimated for each node of the host phylogenetic tree  (Z0_nodes):
+Z0_nodes <- ABDOMEN_extract_Z0_nodes(tree, table, fit_summary, detection_threshold = detection_threshold) # Z0_nodes contains the relative abundances of each bacterial taxa, the node number in the host tree, and the list of all extant taxa descending from this node (column MRCA).
+
 
 ```
 
@@ -185,7 +189,7 @@ ABDOMEN_extract_Z0(tree, table, fit_summary) #  gives the mean ancestral microbi
 
 ```r
 # The microbial integration (R; variance-covariance matrix between microbial taxa):
-R_matrices <- ABDOMEN_extract_R(tree, table, fit_summary) 
+R_matrices <- ABDOMEN_extract_R(tree, table, fit_summary, detection_threshold = detection_threshold) 
 R_matrices$R #  gives the mean variance-covariance matrix R between microbial taxa
 R_matrices$R_lower_bound #  gives the lower bound of the 95% CI of the variance-covariance matrix R 
 R_matrices$R_upper_bound #  gives the upper bound of the 95% CI of the variance-covariance matrix R 
@@ -233,7 +237,7 @@ fit_summary_permut <- ABDOMEN(tree, table_random, name = name_random,
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
 
-ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut)
+ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut, detection_threshold = detection_threshold)
 
 ```
 
@@ -253,7 +257,7 @@ for (seed in 1:nb_permutations){
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
-    list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut))
+    list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut, detection_threshold = detection_threshold))
 }
 
 # p-value for the significance of phylosymbiosis:
@@ -293,7 +297,7 @@ for (seed in 1:nb_permutations){
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
-    list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut))
+    list_lambda_permutations <- rbind(list_lambda_permutations, ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut, detection_threshold = detection_threshold))
 }
 
 # p-value for the significance of phylosymbiosis:
