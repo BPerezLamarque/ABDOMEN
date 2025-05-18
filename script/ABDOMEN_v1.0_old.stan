@@ -12,7 +12,6 @@ data {
   cov_matrix[n] C;
   real mean_prior_logY;
   real<lower=0> sd_prior_logY;
-  vector[p] prior_Z0;
 }
 
 transformed data {
@@ -57,8 +56,7 @@ model {
   {
     logXdiff[i] = logZ[i] + logY[i] - log(Z0)';
   }
-  target += -0.5*n*log_determinant(R) - 0.5*(p)*log_determinant(Clambda) - 0.5*trace(mdivide_left_spd(R, logXdiff') * mdivide_left_spd(Clambda, logXdiff));
+  target += -0.5*n*log_determinant(R) - 0.5*p*log_determinant(Clambda) - 0.5*trace(mdivide_left_spd(R, logXdiff') * mdivide_left_spd(Clambda, logXdiff));
   logY_trans ~ std_normal(); 
   R ~ inv_wishart(p, Id_p);
-  Z0 ~ dirichlet(prior_Z0);
 }

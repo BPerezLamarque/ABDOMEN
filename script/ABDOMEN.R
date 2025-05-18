@@ -1,4 +1,4 @@
-ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=1e-05, seed=3, mean_prior_logY=0, sd_prior_logY=2,
+ABDOMEN <- function(tree, table, name, code_path = getwd(), prior_Z0="uniform", detection_threshold=1e-05, seed=3, mean_prior_logY=0, sd_prior_logY=2,
                     nb_cores = 1, chains = 4, warmup = 500, iter = 1000, plot_chains=TRUE){
   
   # scale the tree
@@ -6,10 +6,14 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
   
   if (!is.rooted(tree)){print("WARNING: Your tree is not rooted. Please root your tree before running ABDOMEN.")}
   if (!is.ultrametric(tree)){print("WARNING: Your tree is not ultrametric. Please calibrate your tree before running ABDOMEN. If and only if, the tree is non ultrametric because of numerical precisions, you can use the function 'force.ultrametric()'.")}
-  if (!all(tree$tip.label %in% rownames(table))){print("WARNING: Some species in the tree are not in the OTU table. Please remove these species from the phylogenetic tree before running AB.")}
+  if (!all(tree$tip.label %in% rownames(table))){print("WARNING: Some species in the tree are not in the OTU table. Please remove these species from the phylogenetic tree before running ABDOMEN.")}
+  if (!prior_Z0 %in% c("uniform", "empirical")){print("WARNING: The prior on Z0 can be set to either 'uniform', where all taxa are assumed to have equal frequencies at the root, or 'empirical', where the ancestral frequencies at the root are derived from the observed frequencies in the present-day OTU table. Alternatively, you can specify a numeric vector representing the empirical frequencies directly: in this case, the vector should correspond to the p columns of the OTU table (with taxa ordered identically) and must sum to 1.")}
   
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
+  
+  if (all(rowSums(table)==1)){print("WARNING: The OTU table contains host species with missing (NA) abundance values or exclusively zero abundances.")}
+  
   
   # reorder table as tree$tip.label
   table <- table[tree$tip.label,]
@@ -26,15 +30,19 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
   C=vcv(tree)
   
   
+  if (length(prior_Z0)==1) if (prior_Z0=="uniform") prior_Z0 <- rep(1/p, p)
+  if (length(prior_Z0)==1) if (prior_Z0=="empirical") prior_Z0 <- colMeans(table)
+  
+  
   # Input data
   microbiotree_input_data = list(n = n, p = p, 
                                  logZ = log(table), 
                                  C = C,
                                  mean_prior_logY = mean_prior_logY,
-                                 sd_prior_logY = sd_prior_logY)
+                                 sd_prior_logY = sd_prior_logY,
+                                 prior_Z0 = prior_Z0)
   
   # Initiation 
-  
   init_function = function(n, p, Posdef, tree, mvSIM){
     
     Z0 = runif(p, 0, 1)
@@ -63,7 +71,6 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), detection_threshold=
   
   
   # Process the output of the run
-  
   if (plot_chains){
     
     a <- extract(fit, permuted = FALSE) 
@@ -159,6 +166,15 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
   lambda_2.5 <- round(fit_summary$summary[nrow(fit_summary$summary)-1,4],2)
   lambda_97.5 <- round(fit_summary$summary[nrow(fit_summary$summary)-1,8],2)
   print(paste0("Pagel's lambda: ", lambda, ", 95% CI: [",lambda_2.5, "; ", lambda_97.5, "]"))
+  
+  
+  # Proportion of the variance explained by the phylogenetic tree: 
+  C_lambda <- vcv(tree)*lambda
+  diag(C_lambda) <- 1
+  proportion_phylo_variance <- det(C_lambda) / (1-lambda + det(C_lambda))
+  print(paste0("Percentage of the variance in present-day microbiota composition that can be explained by the host phylogenetic tree: ", proportion_phylo_variance*100," %"))
+  
+  
   
   dir.create(file.path(code_path, "plot_ABDOMEN/"), showWarnings = FALSE)
   
@@ -420,8 +436,15 @@ ABDOMEN_extract_lambda <- function(tree, table, fit_summary, detection_threshold
   lambda_2.5 <- round(fit_summary$summary[nrow(fit_summary$summary)-1,4],2)
   lambda_97.5 <- round(fit_summary$summary[nrow(fit_summary$summary)-1,8],2)
   
-  all_lambda <- c(lambda,lambda_2.5, lambda_97.5)
-  names(all_lambda) <- c("Pagels_lambda", "lower_bound", "upper_bound")
+  
+  # Proportion of the variance explained by the phylogenetic tree: 
+  C_lambda <- vcv(tree)*lambda
+  diag(C_lambda) <- 1
+  proportion_phylo_variance <- det(C_lambda) / (1-lambda + det(C_lambda))
+  
+  
+  all_lambda <- c(lambda,lambda_2.5, lambda_97.5, proportion_phylo_variance*100)
+  names(all_lambda) <- c("Pagels_lambda", "lower_bound", "upper_bound", "percentage_phylo_variance")
   
   return(all_lambda)
   

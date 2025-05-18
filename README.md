@@ -103,6 +103,9 @@ detection_threshold <- 1e-05 # the detection threshold: below this threshold, we
 
 seed <- 3 # seed for reproductibility
 
+prior_Z0 = "empirical" # the prior on the ancestral abundances (Z0) can be set to either 'uniform', where all taxa are assumed to have equal frequencies at the root, or 'empirical', where the ancestral frequencies at the root are derived from the observed frequencies in the present-day OTU table. Alternatively, you can specify a numeric vector representing the empirical frequencies directly: in this case, the vector should correspond to the p columns of the OTU table (with taxa ordered identically) and must sum to 1.
+  
+
 mean_prior_logY <- 0 # mean value for the Gaussian prior of logY (the latent variables that correspond to the total microbial abundances, relative to the ancestral ones)
 sd_prior_logY <- 2  # standard deviation for the Gaussian prior of logY (the latent variables that correspond to the total microbial abundances, relative to the ancestral ones)
 
@@ -119,6 +122,7 @@ Now you can **run ABDOMEN**:
 
 fit_summary <- ABDOMEN(tree, table, name, 
                        code_path = code_path,
+                       prior_Z0 = prior_Z0,
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
@@ -159,7 +163,7 @@ Besides the plots, you can also directly extract the estimated parameter values:
 ```r
 
 # Pagel's lambda (the measure of phylosymbiosis):
-original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary, detection_threshold = detection_threshold) # gives the mean estimated Pagel's lambda and its 95% CI
+original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary, detection_threshold = detection_threshold) # gives the mean estimated Pagel's lambda, its 95% CI, as well as the percentage of the variance in present-day microbiota composition that can be explained by the host phylogenetic tree.
 original_lambda
 
 # The ancestral microbiota composition (Z0):
@@ -233,6 +237,7 @@ rownames(table_random) <- rownames(table)
 
 fit_summary_permut <- ABDOMEN(tree, table_random, name = name_random, 
                        code_path = code_path,
+                       prior_Z0 = prior_Z0,
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
@@ -254,6 +259,7 @@ for (seed in 1:nb_permutations){
     rownames(table_random) <- rownames(table)
     fit_summary_permut <- ABDOMEN(tree, table_random, name = name_random, 
                        code_path = code_path,
+                       prior_Z0 = prior_Z0,
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
@@ -294,6 +300,7 @@ for (seed in 1:nb_permutations){
     
     fit_summary_permut <- ABDOMEN(tree, table_random, name = name_random, 
                        code_path = code_path,
+                       prior_Z0 = prior_Z0,
                        detection_threshold = detection_threshold, seed = seed, 
                        mean_prior_logY = mean_prior_logY, sd_prior_logY = sd_prior_logY,
                        nb_cores = nb_cores, chains = chains, warmup = warmup, iter = iter)
