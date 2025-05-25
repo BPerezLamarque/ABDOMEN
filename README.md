@@ -97,9 +97,10 @@ The following **parameters must be specified** to run ABDOMEN:
 
 name <- "run_Cetartiodactyla_bacterial_orders" # the name of the run
 
-code_path <- getwd() # indicates where the stan codes are stored (here, there are directly stored in the working directory) and where the ABDOMEN plots will be generated.
+code_path <- getwd() # indicate where the stan codes are stored (here, there are directly stored in the working directory) and where the ABDOMEN plots will be generated.
 
-detection_threshold <- 1e-05 # the detection threshold: below this threshold, we assume that we cannot detect the microbial taxa (either because it is not present or because we cannot detect very rare taxa with metabarcoding techniques). Then, all relative abundances below this threshold are set to this threshold. 
+detection_threshold <- 1e-05 # set the detection threshold: below this threshold, we assume that we cannot detect the microbial taxa (either because they are not present or because we cannot detect very rare taxa with metabarcoding techniques). All values below this threshold will be set to the threshold value. If the OTU table is sparse (i.e. contains many zeros), consider increasing this threshold (e.g. to 1e-03).
+
 
 seed <- 3 # seed for reproductibility
 
