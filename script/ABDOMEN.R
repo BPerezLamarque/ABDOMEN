@@ -12,7 +12,7 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), prior_Z0="uniform", 
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
   
-  if (all(rowSums(table)==1)){print("WARNING: The OTU table contains host species with missing (NA) abundance values or exclusively zero abundances.")}
+  if (!all(rowSums(table)==1)){print("WARNING: The OTU table contains host species with missing (NA) abundance values or exclusively zero abundances.")}
   
   
   # reorder table as tree$tip.label
