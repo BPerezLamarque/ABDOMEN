@@ -161,12 +161,18 @@ ABDOMEN_process_output(tree, table, name, fit_summary, code_path = code_path,
 
 Besides the plots, you can also directly extract the estimated parameter values: 
 
+First, you can examine the mean estimated Pagel’s lambda, its 95% confidence interval (CI), as well as the percentage of variance in present-day microbiota composition explained by the host phylogenetic tree. 
+Pagel’s lambda can be difficult to compare across systems with different phylogenetic trees, whereas the proportion of variance in present-day microbiota composition explained by the host phylogeny is more readily comparable across datasets.
 ```r
 
 # Pagel's lambda (the measure of phylosymbiosis):
 original_lambda <- ABDOMEN_extract_lambda(tree, table, fit_summary, detection_threshold = detection_threshold) # gives the mean estimated Pagel's lambda, its 95% CI, as well as the percentage of the variance in present-day microbiota composition that can be explained by the host phylogenetic tree.
 original_lambda
 
+```
+
+Second, the ancestral microbiota composition can be estimated at the root (Z0) and for each node of the host phylogenetic tree  (Z0_nodes).
+```r
 # The ancestral microbiota composition (Z0):
 ABDOMEN_extract_Z0(tree, table, fit_summary, detection_threshold = detection_threshold) #  gives the mean ancestral microbiota composition and the 95% CI of each microbial taxa
 
@@ -192,6 +198,7 @@ Z0_nodes <- ABDOMEN_extract_Z0_nodes(tree, table, fit_summary, detection_thresho
     <b>Figure 4: Estimated ancestral microbiota composition of Cetartiodactyla (mean of the posterior distribution at the root (Z0) and generalized least squares estimates at internal nodes).</b>
 </p>
 
+Third, the matrix of covariance between microbial taxa (R) can be obtained:
 ```r
 # The microbial integration (R; variance-covariance matrix between microbial taxa):
 R_matrices <- ABDOMEN_extract_R(tree, table, fit_summary, detection_threshold = detection_threshold) 
@@ -247,7 +254,7 @@ ABDOMEN_extract_lambda(tree, table_random, fit_summary_permut, detection_thresho
 
 ```
 
-This step must be replicated a large number of times (e.g. 100 with different seeds) to compare the original lambda values with the ones obtained when permutating the dataset and obtain a p-value. For instance :
+This step must be replicated a large number of times (as many times as possible, e.g. at least 100 times with different seeds) to compare the original lambda values with the ones obtained when permutating the dataset and obtain a p-value. For instance :
 
 ```r
 
