@@ -46,7 +46,7 @@ The R and Stan scripts to run ABDOMEN ("ABDOMEN.R" and "ABDOMEN_v1.0.stan") must
 In addition, the following packages must be installed:
 
 ```r
-install.packages("ggplot2", "mvMORPH", "RPANDA", "rstan", "RColorBrewer")
+install.packages("ggplot2", "mvMORPH", "RPANDA", "lattice", "rstan", "RColorBrewer", "scatterpie")
 
 ```
 
@@ -65,9 +65,11 @@ setwd("YOUR_WORKING_DIRECTORY")
 library(ggplot2)
 library(mvMORPH)
 library(RPANDA)
+library(lattice)
 library(rstan)
 rstan_options(auto_write = TRUE)
 library(RColorBrewer)
+library(scatterpie)
 
 
 source("ABDOMEN.R")
@@ -102,7 +104,7 @@ code_path <- getwd() # indicate where the stan codes are stored (here, there are
 detection_threshold <- 1e-05 # set the detection threshold: below this threshold, we assume that we cannot detect the microbial taxa (either because they are not present or because we cannot detect very rare taxa with metabarcoding techniques). All values below this threshold will be set to the threshold value. If the OTU table is sparse (i.e. contains many zeros), consider increasing this threshold (e.g. to 1e-03).
 
 
-seed <- 3 # seed for reproductibility
+seed <- 4 # seed for reproductibility
 
 prior_Z0 = "empirical" # the prior on the ancestral abundances (Z0) can be set to either 'uniform', where all taxa are assumed to have equal frequencies at the root, or 'empirical', where the ancestral frequencies at the root are derived from the observed frequencies in the present-day OTU table. Alternatively, you can specify a numeric vector representing the empirical frequencies directly: in this case, the vector should correspond to the p columns of the OTU table (with taxa ordered identically) and must sum to 1.
   

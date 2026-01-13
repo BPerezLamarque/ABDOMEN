@@ -12,7 +12,7 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), prior_Z0="uniform", 
   # scale the abundance per row (each row sum must be equal to 1)
   for (i in 1:nrow(table)) {table[i,] <- table[i,]/sum(table[i,])}
   
-  if (!all(rowSums(table)==1)){print("WARNING: The OTU table contains host species with missing (NA) abundance values or exclusively zero abundances.")}
+  if (!all(abs(rowSums(table)-1)<1e-15)){print("WARNING: The OTU table contains host species with missing (NA) abundance values or exclusively zero abundances.")}
   
   
   # reorder table as tree$tip.label
@@ -30,8 +30,8 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), prior_Z0="uniform", 
   C=vcv(tree)
   
   
-  if (length(prior_Z0)==1) if (prior_Z0=="uniform") prior_Z0 <- rep(1/p, p)
-  if (length(prior_Z0)==1) if (prior_Z0=="empirical") prior_Z0 <- colMeans(table)
+  if (length(prior_Z0)==1) if (prior_Z0=="uniform") prior_Z0 <- rep(1, p) # uniform prior (Dirichlet(1,1,1...) on the simplex)
+  if (length(prior_Z0)==1) if (prior_Z0=="empirical") prior_Z0 <- colMeans(table)  * p  # empirical Dirichlet, same total concentration as the uniform Dirichlet
   
   
   # Input data
@@ -172,7 +172,7 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
   C_lambda <- vcv(tree)*lambda
   diag(C_lambda) <- 1
   proportion_phylo_variance <- det(C_lambda) / (1-lambda + det(C_lambda))
-  print(paste0("Percentage of the variance in present-day microbiota composition that can be explained by the host phylogenetic tree: ", proportion_phylo_variance*100," %"))
+  print(paste0("Percentage of the variance in present-day microbiota composition that can be explained by the host phylogenetic tree: ", round(proportion_phylo_variance*100,2)," %"))
   
   
   
@@ -283,19 +283,32 @@ ABDOMEN_process_output <- function(tree, table, name, fit_summary, code_path = g
     
     Z0_nodes <- data.frame(exp(state_nodes))
     Z0_nodes$node <- n+1:Nnode(tree)
-    pies <- ggtree::nodepie(Z0_nodes, cols=1:(ncol(Z0_nodes)-1), color=list_colors, alpha=1)
-    p12_nodes <- ggtree::inset(p12, pies, width=0.1, height=0.1 )
+    # pies <- ggtree::nodepie(Z0_nodes, cols=1:(ncol(Z0_nodes)-1), color=list_colors, alpha=1)
+    # p12_nodes <- ggtree::inset(p12, pies, width=0.1, height=0.1 )
+    # 
+    # pdf(paste0(code_path, "/plot_ABDOMEN/results_ancestral_states_", name, ".pdf"), width=6, height=6)
+    # plot(p12_nodes+ggtree::geom_tiplab(size=0) + theme(plot.margin = margin(0.1,0.1,0.1,0.1, "cm")))
+    # plot(p12_nodes+ggtree::geom_tiplab(size=2) + theme(plot.margin = margin(0.1,0.1,0.1,0.1, "cm")))
+    # dev.off()
     
+    node_xy <- p12$data[, c("node", "x", "y")]
+    
+    pie_df <- merge(as.data.frame(node_xy), Z0_nodes, by = "node")
     
     pdf(paste0(code_path, "/plot_ABDOMEN/results_ancestral_states_", name, ".pdf"), width=6, height=6)
-    plot(p12_nodes+ggtree::geom_tiplab(size=0) + theme(plot.margin = margin(0.1,0.1,0.1,0.1, "cm")))
-    plot(p12_nodes+ggtree::geom_tiplab(size=2) + theme(plot.margin = margin(0.1,0.1,0.1,0.1, "cm")))
+    plot(p12 + geom_scatterpie(
+        inherit.aes = FALSE,
+        data = pie_df,
+        aes(x = x, y = y),
+        cols = colnames(state_nodes),
+        pie_scale = 10
+      ) + coord_cartesian())
     dev.off()
+    
+  
   }
   
 }
-
-
 
 
 ABDOMEN_extract_Z0 <- function(tree, table, fit_summary, detection_threshold=1e-05){
