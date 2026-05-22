@@ -1,3 +1,28 @@
+#### Functions to run and process ABDOMEN (A Brownian moDel Of Microbiota EvolutioN): ####
+
+# Citation: Benoît Perez-Lamarque, Guilhem Sommeria-Klein, Loréna Duret, and Hélène Morlon, Phylogenetic comparative approach reveals evolutionary conservatism, ancestral composition, and integration of vertebrate gut microbiota, Molecular Biology and Evolution, Volume 40, Issue 7, July 2023, msad144, doi: https://doi.org/10.1093/molbev/msad144.
+
+# Contact: Benoît Perez-Lamarque (benoit.perez.lamarque@gmail.com)
+
+# Version 1.0 (update: 2026/05/22)
+
+
+
+# Function from RDPANDA to generate a positive definite and symmetric matrix with specified eigenvalues
+
+Posdef <- function (p, ev = rexp(p, 1/100)) {
+  Z <- matrix(ncol = p, rnorm(p^2))
+  decomp <- qr(Z)
+  Q <- qr.Q(decomp)
+  R <- qr.R(decomp)
+  d <- diag(R)
+  ph <- d/abs(d)
+  O <- Q %*% diag(ph)
+  Z <- t(O) %*% diag(ev) %*% O
+  return(Z)
+}
+
+
 ABDOMEN <- function(tree, table, name, code_path = getwd(), prior_Z0="uniform", detection_threshold=1e-05, seed=3, mean_prior_logY=0, sd_prior_logY=2,
                     nb_cores = 1, chains = 4, warmup = 500, iter = 1000, plot_chains=TRUE){
   
@@ -83,7 +108,7 @@ ABDOMEN <- function(tree, table, name, code_path = getwd(), prior_Z0="uniform", 
     list_ESS_bulk <- c()
     list_ESS_tail <- c()
     
-    pdf(paste0("plot_ABDOMEN/convergence_chains_",name,".pdf"),width=4.5, height=4)
+    pdf(paste0(code_path, "/plot_ABDOMEN/convergence_chains_",name,".pdf"),width=4.5, height=4)
     for (param in  list_parameters){
       min <- min(as.vector(c(a[,,param])))
       max <- max(as.vector(c(a[,,param])))
